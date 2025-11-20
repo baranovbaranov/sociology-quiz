@@ -3,24 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Социология Управления: Тест для 1 курса</title>
+    <title>Подготовка по карточкам: Социология Управления</title>
     
     <style>
         :root {
-            /* Новая Фиолетовая Палитра */
-            --primary-purple: #7f00ff; /* Яркий акцент для кнопок и выделений */
-            --dark-purple-bg: #1e003a; /* Глубокий баклажановый фон */
-            --start-card-bg: #281140; /* Темно-фиолетовая карточка старта */
-            --text-light: #e0e0e0; 
-            --text-muted: #c2b3d8; /* Приглушенный текст для слогана */
-            --text-dark: #2c3e50;
-            --card-background: #ffffff; /* Фон карточек вопросов */
-            --active-selection: #ff9800; /* Оранжевый для выделения ответа */
+            /* Фиолетовая Палитра */
+            --primary-purple: #7f00ff; /* Яркий акцент для окантовки и важных элементов */
+            --dark-purple-bg: #1e003a; /* Глубокий баклажановый фон (основной) */
+            --card-base-bg: #281140; /* Темно-фиолетовая основа карточки */
+            --text-light: #e0e0e0; /* Светлый текст для темного фона/карточки */
+            --text-muted: #c2b3d8; /* Приглушенный текст для инструкций */
+            --accent-green: #38c172; /* Зеленый акцент для кнопки старта */
         }
 
         body {
             font-family: 'Arial', sans-serif; 
-            color: var(--text-dark);
             line-height: 1.6;
             margin: 0;
             padding: 0;
@@ -28,16 +25,13 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            transition: background 1s ease-in-out, background-color 0.5s; 
-            
-            /* УНИФИЦИРОВАННЫЙ ФОН: ГЛУБОКИЙ ФИОЛЕТОВЫЙ ГРАДИЕНТ ДЛЯ ВСЕГО */
+            /* ЕДИНЫЙ ТЕМНЫЙ ФОН С ГРАДИЕНТОМ */
             background: linear-gradient(135deg, var(--dark-purple-bg) 0%, #0d0d0d 100%);
             background-attachment: fixed;
             color: var(--text-light); 
             position: relative; 
         }
         
-        /* ВИЗУАЛЬНЫЙ "ШУМ" НА ФОНЕ */
         body::before {
             content: '';
             position: absolute;
@@ -59,298 +53,340 @@
             flex-grow: 1; 
             width: 100%;
             z-index: 1; 
+            padding: 20px; 
+            box-sizing: border-box;
         }
 
-        #quiz-header {
-            display: none; 
-        }
-
-        /* Стиль для стартового экрана и контейнера теста */
-        #start-screen, #quiz-container {
+        /* ОБЩИЙ СТИЛЬ ДЛЯ ЦЕНТРАЛЬНЫХ КАРТОЧЕК (СТАРТ, КОНЕЦ) */
+        #start-screen, #end-screen {
             width: 90%;
-            max-width: 1000px; 
+            max-width: 800px; 
             padding: 50px 60px; 
-            margin: 30px auto;
             border-radius: 20px; 
+            text-align: center;
+            background: var(--card-base-bg); 
+            border: 1px solid #4a3363; 
+            box-shadow: 0 0 20px rgba(127, 0, 255, 0.2); 
+            color: var(--text-light);
+            box-sizing: border-box;
         }
 
         /* СТАРТОВЫЙ ЭКРАН */
-        #start-screen {
-            text-align: center;
-            background: var(--start-card-bg); 
-            border: 1px solid #4a3363; 
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 0 20px rgba(127, 0, 255, 0.2); 
-        }
-        
         #start-title {
             color: var(--text-light);
-            font-size: 2.5em; 
+            font-size: 3em; 
             font-weight: 800;
             margin-bottom: 10px; 
-            text-shadow: 0 0 8px rgba(255, 255, 255, 0.3); 
         }
 
-        #start-slogan {
-            color: var(--text-muted); 
-            font-size: 1.1em;
-            margin-bottom: 50px; 
-            font-weight: 400;
-            text-align: center;
-        }
-
-        /* КОНТЕЙНЕР ТЕСТА */
-        #quiz-container {
-            background: var(--card-background); 
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); 
-        }
-        
-        /* СТИЛИ КАРТОЧЕК ВОПРОСОВ И ОТВЕТОВ (на белом фоне) */
-        .question-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            margin-bottom: 30px; 
-            border-bottom: 3px solid #f0f0f0; 
-            padding-bottom: 15px; 
-        }
-
-        .question-header h2 {
-            font-size: 1.6em; 
-            color: var(--primary-purple); 
-            font-weight: 800;
-            margin: 0;
+        /* КОНТЕЙНЕР КАРТОЧЕК */
+        #flashcard-view {
+            width: 90%;
+            max-width: 800px;
+            display: flex; 
+            flex-direction: column;
+            align-items: center;
             padding: 0;
         }
-
-        #question-number {
-            font-size: 1.6em; 
-            color: var(--primary-purple); 
+        
+        /* Счетчик */
+        #card-counter {
+            font-size: 1.5em;
             font-weight: 700;
+            margin-bottom: 25px;
+            color: var(--text-light); 
         }
 
-        #question-text {
-            font-size: 1.9em; 
-            margin-bottom: 40px;
-            font-weight: 700;
-            line-height: 1.4;
-            color: #34495e;
+        /* КАРТОЧКА: КОНТЕЙНЕР ДЛЯ ПЕРЕВОРОТА */
+        .card-flipper {
+            perspective: 1000px;
+            width: 100%;
+            height: 400px; 
+            margin-bottom: 30px;
         }
-
-        .answers {
-            display: flex;
-            flex-wrap: wrap; 
-            justify-content: space-between;
-            gap: 20px; 
-        }
-
-        .answers button {
-            width: calc(50% - 10px); 
-            padding: 25px; 
-            border: 2px solid #ddd; 
-            border-radius: 30px; 
-            background-color: var(--card-background);
-            text-align: center; 
-            font-size: 1.3em; 
+        
+        .flashcard {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            border-radius: 20px;
             cursor: pointer;
-            transition: all 0.2s ease-in-out;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-            font-weight: 500;
-            color: var(--text-dark);
-        }
-        
-        @media (max-width: 768px) {
-            .answers button {
-                width: 100%;
-            }
-            #quiz-container, #start-screen {
-                 padding: 30px;
-            }
-            #start-title {
-                font-size: 1.8em;
-            }
         }
 
-        .answers button:hover:not(:disabled) {
-            background-color: #f5f0ff; 
-            border-color: var(--primary-purple);
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(127, 0, 255, 0.2);
-        }
-        
-        .answers button.selected {
-            border-color: var(--active-selection); 
-            background-color: #fffaf0; 
-            box-shadow: 0 0 10px rgba(255, 152, 0, 0.5);
+        .flashcard.flipped {
+            transform: rotateY(180deg);
         }
 
-        /* СТИЛИ ДЛЯ ЭКРАНА РЕЗУЛЬТАТОВ (НА ТЕМНОМ ФОНЕ) */
-        .result-box {
-            width: 90%;
-            max-width: 1000px; 
-            padding: 60px;
-            border-radius: 20px; 
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            text-align: center;
-            background: rgba(40, 17, 64, 0.5); /* Полупрозрачная карточка, чтобы видеть фон */
-            border: 1px solid #4a3363;
-            box-shadow: 0 0 20px rgba(127, 0, 255, 0.2);
-            /* СТИЛИЗАЦИЯ ТЕКСТА НА ТЕМНОМ ФОНЕ */
-            color: var(--text-light); 
+            padding: 40px;
+            box-sizing: border-box;
+            
+            /* СТИЛЬ НЕОНОВОЙ ОКАНТОВКИ ДЛЯ ОБЕИХ СТОРОН */
+            background: var(--card-base-bg); /* Темный фон для обеих сторон */
+            color: var(--text-light); /* Светлый текст для обеих сторон */
+            border: 3px solid transparent; 
+            box-shadow: 
+                0 0 15px rgba(127, 0, 255, 0.5), 
+                0 0 0 3px var(--primary-purple); 
+            animation: pulse-border 2s infinite alternate; 
         }
 
-        .result-box h2 {
-            color: var(--primary-purple);
-            font-size: 2.5em;
-            margin-bottom: 30px;
-        }
-
-        #final-score {
-            font-size: 1.8em;
-            color: var(--text-light); 
-            margin-bottom: 40px;
-            line-height: 1.4;
+        /* АНИМАЦИЯ ОКАНТОВКИ */
+        @keyframes pulse-border {
+            from {
+                box-shadow: 
+                    0 0 10px rgba(127, 0, 255, 0.4), 
+                    0 0 0 3px var(--primary-purple);
+            }
+            to {
+                box-shadow: 
+                    0 0 25px rgba(127, 0, 255, 0.8), 
+                    0 0 0 3px var(--primary-purple);
+            }
         }
         
-        /* БОЛЬШОЙ ЦЕНТРАЛЬНЫЙ СЧЕТ */
-        .score-display {
-            font-size: 3.5em; /* Очень крупный шрифт */
+        /* Стили для ВОПРОСА (передняя сторона) */
+        .card-front .header-text { /* ВОПРОС */
+            font-size: 3.5em; 
+            color: var(--text-light);
+            margin: 0 0 20px 0;
             font-weight: 800;
-            color: var(--active-selection); /* Оранжевый акцент */
-            margin: 20px 0;
-            text-shadow: 0 0 10px rgba(255, 152, 0, 0.5);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+        
+        .card-front #card-question { /* Текст вопроса */
+            font-size: 1.5em;
+            font-weight: 500;
+            line-height: 1.4;
+            max-width: 80%;
+            margin: 0;
+        }
+        
+        .card-front .instruction { /* Инструкция переворота */
+            color: var(--text-muted);
+            font-size: 1.1em;
+            margin-top: 20px;
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
         }
 
-        /* Кнопки действий */
-        #next-button, #start-button, .result-box button {
-            display: block;
+
+        /* Стили для ОТВЕТА (задняя сторона) */
+        .card-back {
+            transform: rotateY(180deg);
+            text-align: left;
+            animation: none; 
+        }
+
+        .card-back h3 {
+            color: var(--primary-purple);
+            font-size: 1.5em;
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--primary-purple);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .card-back p {
+            font-size: 1.3em;
+            margin: 0;
+            line-height: 1.5;
+            color: var(--text-light);
+        }
+
+        /* НАВИГАЦИЯ И КНОПКИ */
+        .navigation-controls {
+            display: flex;
+            justify-content: center; 
+            align-items: center;
+            gap: 40px; 
             width: 100%;
-            max-width: 400px; 
-            padding: 20px;
-            margin-top: 40px;
+            margin-top: 20px;
+        }
+        
+        /* Общий стиль для всех кнопок */
+        button {
+            padding: 15px 30px;
             border: none;
-            border-radius: 30px; 
-            font-size: 1.8em; 
+            border-radius: 30px;
+            font-size: 1.2em;
             cursor: pointer;
             transition: all 0.3s;
             font-weight: 700;
             color: white;
-            letter-spacing: 1px;
-        }
-        
-        /* СТИЛЬ КНОПОК - ФИОЛЕТОВЫЙ АКЦЕНТ */
-        #start-button, #next-button, .result-box button {
-            background-color: var(--primary-purple); 
-            box-shadow: 0 5px 15px rgba(127, 0, 255, 0.4);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            white-space: nowrap; 
         }
 
-        #start-button:hover, #next-button:hover:not(:disabled), .result-box button:hover {
-            background-color: #6600cc;
-            box-shadow: 0 8px 20px rgba(127, 0, 255, 0.6);
+        /* Кнопка Старт */
+        #start-button {
+            background-color: var(--accent-green); 
+            font-size: 1.8em;
+            width: 100%;
+            margin-top: 40px;
+            max-width: 400px;
+        }
+        #start-button:hover {
+            background-color: #279257;
             transform: translateY(-2px);
         }
+        
+        /* Кнопки Навигации */
+        .nav-button {
+            background-color: var(--primary-purple);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 25px; 
+        }
 
-        #next-button:disabled {
+        .nav-button:hover:not(:disabled) {
+            background-color: #6600cc;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(127, 0, 255, 0.6);
+        }
+        
+        .nav-button:disabled {
             background-color: #a081c2; 
             cursor: not-allowed;
-            box-shadow: none;
+            opacity: 0.5;
             transform: none;
+            box-shadow: none;
         }
+        
+        /* Стили для стрелок в кнопках навигации */
+        .nav-button span {
+            font-size: 1.5em;
+            line-height: 1; 
+        }
+
+        /* Кнопка "Завершить подготовку" */
+        #next-button.finish {
+            background-color: var(--accent-green);
+        }
+        #next-button.finish:hover:not(:disabled) {
+            background-color: #279257;
+            box-shadow: 0 8px 20px rgba(56, 193, 114, 0.6);
+        }
+
+
+        /* ЭКРАН ЗАВЕРШЕНИЯ */
+        #end-screen {
+            display: flex; 
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        #end-screen h2 {
+            font-size: 2.5em;
+            color: var(--accent-green); 
+        }
+        
+        #end-screen button {
+            background-color: var(--accent-green);
+            max-width: 300px;
+            margin-top: 30px;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            #start-screen, #end-screen {
+                padding: 30px;
+            }
+            #start-title {
+                font-size: 2em;
+            }
+            .card-flipper {
+                height: 300px;
+            }
+            .card-front .header-text {
+                font-size: 2.5em;
+            }
+            .card-front #card-question {
+                font-size: 1.2em;
+            }
+            .card-back p {
+                font-size: 1.1em;
+            }
+            .navigation-controls {
+                flex-direction: column;
+                gap: 20px;
+            }
+            .navigation-controls button {
+                width: 100%;
+                max-width: none;
+            }
+        }
+
     </style>
 </head>
 <body>
-    <header id="quiz-header"></header>
     
     <main>
         <div id="start-screen"> 
-            <h1 id="start-title">Тест по социологии управления</h1>
+            <h1 id="start-title">Подготовка по карточкам</h1>
             
-            <p id="start-slogan">Проверьте свои знания в области организации, лидерства и социальных процессов.</p>
+            <p>Используйте этот режим для запоминания ключевых определений. При клике на карточку вы увидите ответ.</p>
             
-            <button id="start-button">НАЧАТЬ ТЕСТ</button>
+            <button id="start-button">НАЧАТЬ ПОДГОТОВКУ</button>
         </div>
         
-        <div id="quiz-container" style="display: none;">
-            <div class="question-header">
-                <h2>ВОПРОС</h2>
-                <div id="question-number"></div>
+        <div id="flashcard-view" style="display: none;">
+            
+            <div id="card-counter">Карточка 1 из 14</div>
+
+            <div class="card-flipper">
+                <div class="flashcard" onclick="flipCard()">
+                    
+                    <div class="card-face card-front">
+                        <div class="header-text">ВОПРОС</div>
+                        <p id="card-question">Здесь будет текст вопроса...</p>
+                        <p class="instruction">Нажмите, чтобы перевернуть</p>
+                    </div>
+                    
+                    <div class="card-face card-back">
+                        <h3>ОТВЕТ</h3>
+                        <p id="card-answer">Здесь будет текст ответа...</p>
+                    </div>
+                </div>
             </div>
 
-            <div id="question-text"></div>
-            <div class="answers">
-                </div>
-            
-            <button id="next-button" disabled>Следующий вопрос</button>
+            <div class="navigation-controls">
+                <button id="prev-button" class="nav-button" onclick="changeCard(-1)" disabled>
+                    <span style="font-size: 1.5em;">&#9664;</span> Назад
+                </button>
+                <button id="next-button" class="nav-button" onclick="changeCard(1)">
+                    Следующая <span style="font-size: 1.5em;">&#9654;</span>
+                </button>
+            </div>
         </div>
-        
-        <div class="result-box" id="result-box" style="display: none;">
-            <h2>Тест завершен!</h2>
-            <div id="final-score"></div>
-            
-            <button onclick="window.location.reload()">Начать тест сначала</button>
+
+        <div id="end-screen" style="display: none;">
+            <h2>Подготовка завершена!</h2>
+            <p style="font-size: 1.2em;">Вы просмотрели все карточки. Отличная работа!</p>
+            <button onclick="window.location.reload()">Начать заново</button>
         </div>
-        </main>
+    </main>
 
     <script>
-        // 1. Данные теста 
-        const quizData = [
-            {
-                question: "Социальное явление, описывающее тенденцию группы принимать решения, которые избегают конфликтов",
-                answers: [
-                    { text: "Сотрудничество", correct: false },
-                    { text: "Групповое мышление", correct: true },
-                    { text: "Мозговой штурм", correct: false },
-                    { text: "Делегирование", correct: false }
-                ]
-            },
-            {
-                question: "Что из перечисленного является ключевым компонентом теории бюрократии Макса Вебера?",
-                answers: [
-                    { text: "Неформальные коммуникации", correct: false },
-                    { text: "Иерархическая структура", correct: true },
-                    { text: "Гибкость и адаптивность", correct: false },
-                    { text: "Эмоциональный интеллект лидера", correct: false }
-                ]
-            },
-            {
-                question: "Какой стиль руководства характеризуется полным предоставлением свободы действий подчиненным?",
-                answers: [
-                    { text: "Авторитарный", correct: false },
-                    { text: "Демократический", correct: false },
-                    { text: "Либеральный (невмешивающийся)", correct: true },
-                    { text: "Трансформационный", correct: false }
-                ]
-            },
-        ];
-
-        // 2. Переменные для состояния теста
-        const QUESTIONS_TO_ASK = quizData.length; 
-        let currentShuffledQuestions = [];
-        let currentQuestionIndex = 0;
-        let score = 0;
-        let userAnswers = []; 
-        let currentSelectedAnswerIndex = null; 
-
-        // 3. Получение элементов DOM
-        const body = document.body; 
-        const quizContainer = document.getElementById('quiz-container');
-        const startScreen = document.getElementById('start-screen');
-        const startButton = document.getElementById('start-button');
-        const questionNumberDiv = document.getElementById('question-number');
-        const questionTextDiv = document.getElementById('question-text');
-        const answersDiv = document.querySelector('.answers');
-        const nextButton = document.getElementById('next-button');
-        // !!! ИСПРАВЛЕНИЕ: Получаем result-box по новому ID/классу !!!
-        const resultBox = document.getElementById('result-box');
-        const finalScore = document.getElementById('final-score');
-
-        // 4. Вспомогательная функция для перемешивания
+        /**
+         * Перемешивает массив (алгоритм Фишера-Йейтса).
+         * @param {Array} array - массив для перемешивания
+         */
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -358,150 +394,159 @@
             }
         }
 
-        // 5. Функция выбора и перемешивания вопросов
-        function shuffleAndSelectQuestions() {
-            let shuffledQuizData = [...quizData];
-            shuffleArray(shuffledQuizData);
-            currentShuffledQuestions = shuffledQuizData.slice(0, QUESTIONS_TO_ASK);
-            currentShuffledQuestions.forEach(q => shuffleArray(q.answers));
-            userAnswers = Array(QUESTIONS_TO_ASK).fill(null); 
-        }
+        // 1. ДАННЫЕ КАРТОЧЕК
+        // !!! ВАШ СПИСОК ВОПРОСОВ И ОТВЕТОВ !!!
+        const flashcards = [
+            {
+                question: "Какова сущность социологического подхода к управлению?",
+                answer: "Управление рассматривается как социальный процесс, основанный на взаимодействии людей, формировании социальных отношений и институтах, влияющих на организацию деятельности."
+            },
+            {
+                question: "Какие основные объекты и задачи изучает социология управления?",
+                answer: "Объект — общественные системы и организации; задачи — изучение социальных отношений, норм и ценностей, влияющих на управление, и разработка теорий и практик управления."
+            },
+            {
+                question: "Что значит междисциплинарный характер социологии управления?",
+                answer: "Это сочетание знаний и методов социологии, экономики, психологии и менеджмента для комплексного анализа управления."
+            },
+            {
+                question: "Как определяется система управления с социологической точки зрения?",
+                answer: "Система управления — совокупность социальных отношений, норм и институтов, обеспечивающих координацию и контроль в организациях."
+            },
+            {
+                question: "Какие актуальные проблемы изучает современная социология управления?",
+                answer: "Разделение власти, легитимность власти, социальные конфликты, адаптация к изменениям, глобализация и взаимодействие социальных групп."
+            },
+            {
+                question: "Каковы теоретические предпосылки возникновения социологии управления?",
+                answer: "Рост сложности организаций, развитие индустриального общества, потребность в научных методах управления, влияние классической социологии."
+            },
+            {
+                question: "Назовите основные парадигмы и теории социологии управления.",
+                answer: "Структурный функционализм — рассматривает организацию как систему взаимосвязанных элементов, направленных на достижение целей.\nТеория социальных конфликтов — акцентирует внимание на конфликтах интересов и власти в управлении.\nСимволический интеракционализм — исследует управление через призму символов и взаимодействия людей.\nТеория обмена — рассматривает взаимодействия в управлении как обмен ресурсами.\nТеория социального действия — анализирует действия индивидов в управленческих процессах с учетом их смыслов."
+            },
+            {
+                question: "Как классические социологи понимали управление обществом?",
+                answer: "О. Конт — как социальный порядок; Г. Спенсер — как биологическую эволюцию; К. Маркс — как борьбу классов; Э. Дюркгейм — как социальную солидарность."
+            },
+            {
+                question: "Что характеризует государственное управление в теории элит?",
+                answer: "Управление контролируют элиты — правящий класс с институциональным авторитетом, разделяющий общество на управляемых и управляемых."
+            },
+            {
+                question: "Какие взгляды на бюрократию развивал Макс Вебер?",
+                answer: "Бюрократия — рациональная, формальная и иерархическая модель управления, основанная на четких правилах и профессионализме."
+            },
+            {
+                question: "Какие аспекты массового общества исследовали Лебон, Тард, Фрейд?",
+                answer: "Поведение масс, влияние толпы, психология коллективного сознания и социальные механизмы масс."
+            },
+            {
+                question: "Вклад Тейлора, Вебера, Мэйо, Маслоу и Макгрегора в социологию управления?",
+                answer: "Создание научного менеджмента, бюрократической теории, теории человеческих отношений и мотивационных моделей."
+            },
+            {
+                question: "Что такое социоинженерный и клинический подходы?",
+                answer: "Социоинженерный — проектирование и изменение социальных систем; клинический — диагностика и терапия социальных проблем в организациях."
+            },
+            {
+                question: "Какие три группы функций выполняет социология управления?",
+                answer: "Теоретическая (создание концепций), прикладная (анализ социальных процессов управления), прогностическая (предсказание развития систем)."
+            }
+        ];
+        
+        // !!! ПЕРЕМЕШИВАЕМ КАРТОЧКИ СРАЗУ ПОСЛЕ ОПРЕДЕЛЕНИЯ !!!
+        shuffleArray(flashcards);
 
-        // 6. Функция отображения вопроса
-        function showQuestion() {
-            if (currentQuestionIndex >= QUESTIONS_TO_ASK) {
-                showResults();
+
+        // 2. СОСТОЯНИЕ
+        let currentCardIndex = 0;
+        const totalCards = flashcards.length;
+
+        // 3. ЭЛЕМЕНТЫ DOM
+        const startScreen = document.getElementById('start-screen');
+        const flashcardView = document.getElementById('flashcard-view');
+        const flashcardElement = document.querySelector('.flashcard');
+        const cardCounter = document.getElementById('card-counter');
+        const cardQuestion = document.getElementById('card-question');
+        const cardAnswer = document.getElementById('card-answer');
+        const prevButton = document.getElementById('prev-button');
+        const nextButton = document.getElementById('next-button');
+        const endScreen = document.getElementById('end-screen');
+
+        // 4. ФУНКЦИИ
+        
+        function showCard() {
+            if (currentCardIndex >= totalCards) {
+                showEndScreen();
                 return;
             }
-
-            const currentQuestion = currentShuffledQuestions[currentQuestionIndex];
             
-            currentSelectedAnswerIndex = userAnswers[currentQuestionIndex]; 
+            // Сбрасываем переворот, если карточка была перевернута
+            flashcardElement.classList.remove('flipped'); 
+
+            const card = flashcards[currentCardIndex];
+            cardQuestion.textContent = card.question;
+            cardAnswer.textContent = card.answer;
+            cardCounter.textContent = `Карточка ${currentCardIndex + 1} из ${totalCards}`;
             
-            answersDiv.innerHTML = '';
-            
-            nextButton.disabled = (currentSelectedAnswerIndex === null); 
-
-            questionNumberDiv.textContent = `${currentQuestionIndex + 1}/${QUESTIONS_TO_ASK}`;
-            questionTextDiv.textContent = currentQuestion.question;
-
-            // Обновление текста кнопки
-            if (currentQuestionIndex === QUESTIONS_TO_ASK - 1) {
-                nextButton.textContent = 'ЗАВЕРШИТЬ ТЕСТ';
-            } else {
-                nextButton.textContent = 'Следующий вопрос';
-            }
-
-
-            currentQuestion.answers.forEach((answer, index) => {
-                const button = document.createElement('button');
-                button.textContent = answer.text;
-                button.setAttribute('data-index', index); 
-                button.addEventListener('click', () => selectAnswer(button));
-                answersDiv.appendChild(button);
-
-                if (currentSelectedAnswerIndex === index) {
-                    button.classList.add('selected');
-                }
-            });
+            updateNavigationButtons();
         }
 
-        // 7. ЛОГИКА: Выбор ответа 
-        function selectAnswer(selectedButton) {
-            Array.from(answersDiv.children).forEach(button => {
-                button.classList.remove('selected');
-            });
-            
-            selectedButton.classList.add('selected');
-            
-            currentSelectedAnswerIndex = parseInt(selectedButton.getAttribute('data-index'));
-            
-            nextButton.disabled = false;
+        function flipCard() {
+            flashcardElement.classList.toggle('flipped');
         }
 
-        // 8. ФУНКЦИЯ ПЕРЕХОДА К СЛЕДУЮЩЕМУ ВОПРОСУ 
-        function processNextClick() {
-            // 1. Сохраняем выбор
-            if (currentSelectedAnswerIndex !== null) {
-                userAnswers[currentQuestionIndex] = currentSelectedAnswerIndex;
+        function changeCard(direction) {
+            const previousIndex = currentCardIndex; 
+            currentCardIndex += direction;
+
+            if (currentCardIndex >= totalCards) {
+                showEndScreen(); 
+                return; 
             }
             
-            // 2. Проверяем, был ли это последний вопрос
-            if (currentQuestionIndex === QUESTIONS_TO_ASK - 1) {
-                showResults(); // Если последний, показываем результаты
+            if (currentCardIndex < 0) {
+                currentCardIndex = 0; 
+            }
+            
+            if (previousIndex !== currentCardIndex) {
+                 flashcardElement.classList.remove('flipped');
+                 setTimeout(showCard, 100); 
             } else {
-                // Если не последний, переходим к следующему
-                currentQuestionIndex++;
-                currentSelectedAnswerIndex = null; // Сбрасываем временный выбор
-                showQuestion();
+                 updateNavigationButtons();
+            }
+        }
+
+        function updateNavigationButtons() {
+            prevButton.disabled = currentCardIndex === 0;
+            
+            if (currentCardIndex === totalCards - 1) {
+                nextButton.innerHTML = 'Завершить подготовку';
+                nextButton.classList.add('finish'); 
+            } else {
+                nextButton.innerHTML = 'Следующая <span style="font-size: 1.5em;">&#9654;</span>';
+                nextButton.classList.remove('finish'); 
             }
         }
         
-        nextButton.addEventListener('click', processNextClick);
-
-
-        // 9. ФУНКЦИЯ ОТОБРАЖЕНИЯ РЕЗУЛЬТАТОВ (ГЛАВНОЕ ИСПРАВЛЕНИЕ: ПРЯМОЙ ВЫЗОВ resultBox)
-        function showResults() {
-            // Скрываем контейнер вопросов
-            quizContainer.style.display = 'none';
-            // Показываем контейнер результатов (который теперь внешний и независимый)
-            resultBox.style.display = 'flex'; 
-            
-            let finalScoreCount = 0;
-            currentShuffledQuestions.forEach((question, index) => {
-                const selectedAnswerIndex = userAnswers[index];
-                
-                if (selectedAnswerIndex !== null) {
-                    const isCorrect = question.answers[selectedAnswerIndex].correct;
-                    if (isCorrect) {
-                        finalScoreCount++;
-                    }
-                }
-            });
-            score = finalScoreCount; 
-
-            const percentage = (score / QUESTIONS_TO_ASK) * 100;
-            let message = '';
-
-            if (percentage === 100) {
-                message = 'Поздравляем! Вы набрали максимум баллов!';
-            } else if (percentage >= 70) {
-                message = 'Отличный результат! У вас очень хорошие знания.';
-            } else if (percentage >= 40) {
-                message = 'Неплохо, но есть над чем поработать.';
-            } else {
-                message = 'Требуется повторение материала. Не сдавайтесь!';
-            }
-
-            finalScore.innerHTML = `
-                <div class="score-display">${score} из ${QUESTIONS_TO_ASK}</div>
-                <p style="font-size: 1.2em; margin-bottom: 20px;">Правильных ответов: 
-                <strong style="color: var(--active-selection);">${score}</strong> (${percentage.toFixed(0)}%)
-                </p>
-                <p style="font-size: 1.4em; font-weight: 500; font-style: italic;">${message}</p>
-            `;
+        function showEndScreen() {
+            flashcardView.style.display = 'none';
+            endScreen.style.display = 'flex'; 
         }
-        
-        // 10. ФУНКЦИЯ ДЛЯ ЗАПУСКА ТЕСТА 
-        function startQuiz() {
-            body.style.background = `linear-gradient(135deg, ${getComputedStyle(document.documentElement).getPropertyValue('--dark-purple-bg')} 0%, #0d0d0d 100%)`;
-            body.style.color = 'var(--text-dark)'; 
-            
-            document.getElementById('quiz-header').style.display = 'none'; 
+
+
+        // 5. ИНИЦИАЛИЗАЦИЯ
+        document.getElementById('start-button').addEventListener('click', () => {
             startScreen.style.display = 'none';
-            
-            quizContainer.style.display = 'block';
-            
-            currentQuestionIndex = 0;
-            score = 0;
-            resultBox.style.display = 'none';
-            
-            shuffleAndSelectQuestions();
-            showQuestion();
-        }
-
-        // 11. СЛУШАТЕЛЬ СОБЫТИЯ ДЛЯ КНОПКИ НАЧАТЬ
-        startButton.addEventListener('click', startQuiz);
+            if (totalCards === 0) {
+                 endScreen.innerHTML = '<h2>Нет карточек для подготовки</h2><p>Пожалуйста, добавьте вопросы в код.</p><button onclick="window.location.reload()">Начать заново</button>';
+                endScreen.style.display = 'flex';
+            } else {
+                flashcardView.style.display = 'flex';
+                showCard();
+            }
+        });
 
     </script>
 </body>
